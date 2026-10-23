@@ -1,0 +1,217 @@
+/** strcmp:
+ *  Simple string comparison function
+ *
+ *  @param s1  First string
+ *  @param s2  Second string
+ *  @return    0 if equal, non-zero otherwise
+ */
+int strcmp(const char *s1, const char *s2)
+{
+    while (*s1 && (*s1 == *s2)) {
+        s1++;
+        s2++;
+    }
+    return *(unsigned char *)s1 - *(unsigned char *)s2;
+}
+
+#define MAX_PARTS 100
+#define MAX_LEN 100
+
+char *g_parts[MAX_PARTS];
+char g_buffer[MAX_PARTS][MAX_LEN];  // مخزن مؤقت للنسخ
+
+char **strsplit(const char *str, char delim)
+{
+    int part_count = 0;
+    int char_count = 0;
+    
+    while (*str && part_count < MAX_PARTS - 1) {
+        // تجاوز المحددات المتتالية
+        while (*str == delim) str++;
+        if (!*str) break;
+        
+        // نسخ الجزء الحالي
+        char_count = 0;
+        while (*str && *str != delim && char_count < MAX_LEN - 1) {
+            g_buffer[part_count][char_count++] = *str++;
+        }
+        g_buffer[part_count][char_count] = '\0';
+        g_parts[part_count] = g_buffer[part_count];
+        part_count++;
+    }
+    
+    g_parts[part_count] = 0;
+    return g_parts;
+}
+
+int strlen(const char *s1)
+{
+    unsigned int i = 0;
+    while (*s1)
+    {
+        s1++;
+        i++;
+    }
+    
+    return i;
+}
+
+int strncmp(const char *s1, const char *s2, unsigned int n)
+{
+    if (n == 0) return 0;
+    
+    while (n > 0) {
+        if (*s1 != *s2) {
+            return *(unsigned char *)s1 - *(unsigned char *)s2;
+        }
+        if (*s1 == '\0') {
+            return 0;  // وصلنا إلى نهاية السلسلة
+        }
+        s1++;
+        s2++;
+        n--;
+    }
+    return 0;  // جميع الأحرف متطابقة
+}
+
+int strcopy(const char *src, char *dist)
+{
+    int i = 0;
+    while (src[i] != 0 && i < strlen(src))
+    {
+        dist[i] = src[i];
+        i++;
+    }
+    i++;
+    dist[i] = 0;
+    return i;
+}
+
+char* strchar(char *str, char ch)
+{
+    unsigned char i = 0;
+    while (str[i] != '\0') {
+        if (str[i] == ch) return &str[i];
+        i++;
+    }
+    return (char*)0;
+}
+
+char* strstring(char *haystack, char *needle)
+{
+    unsigned char i = 0, j = 0;
+    while (haystack[i] != '\0') {
+        j = 0;
+        while (needle[j] != '\0' && haystack[i + j] != '\0' && haystack[i + j] == needle[j]) {
+            j++;
+        }
+        if (needle[j] == '\0') {
+            return &haystack[i];
+        }
+        i++;
+    }
+    return (char*)0;
+}
+
+int strncopy(char *src, char *dist, int n)
+{
+    int i = 0;
+    while (src[i] != 0 && i < n)
+    {
+        dist[i] = src[i];
+        i++;
+    }
+    src[i] = src[i];
+    dist[i] = dist[i];
+    n = n;
+    i++;
+    return i;
+}
+
+int memcpy(char *src, char *dist, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        dist[i] = src[i];
+    }
+    return n;
+}
+
+int memcmp(const char *s1, const char *s2, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        if (s1[i] != s2[i])
+        {
+            return s1[i] - s2[i];
+        }
+    }
+    return 0;
+}
+
+char *int_to_str(int num)
+{
+    char *str = "";
+    int i = 0;
+    int is_negative = 0;
+    
+    if (num == 0) {
+        str[0] = '0';
+        str[1] = '\0';
+        return str;
+    }
+    
+    if (num < 0) {
+        is_negative = 1;
+        num = -num;
+    }
+    
+    while (num > 0) {
+        str[i++] = '0' + (num % 10);
+        num /= 10;
+    }
+    
+    if (is_negative) {
+        str[i++] = '-';
+    }
+    
+    str[i] = '\0';
+    
+    /* Reverse the string */
+    int start = 0;
+    int end = i - 1;
+    while (start < end) {
+        char temp = str[start];
+        str[start] = str[end];
+        str[end] = temp;
+        start++;
+        end--;
+    }
+    return str;
+}
+int str_to_int(const char *str)
+{
+    int result = 0;
+    int sign = 1;
+    
+    // تخطي المسافات البيضاء
+    while (*str == ' ') {
+        str++;
+    }
+    
+    // التعامل مع الإشارة
+    if (*str == '-') {
+        sign = -1;
+        str++;
+    } else if (*str == '+') {
+        str++;
+    }
+    
+    // تحويل الأرقام
+    while (*str >= '0' && *str <= '9') {
+        result = result * 10 + (*str - '0');
+        str++;
+    }
+    
+    return result * sign;
+}
